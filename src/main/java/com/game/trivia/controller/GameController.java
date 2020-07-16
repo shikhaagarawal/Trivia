@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-@CrossOrigin(origins={"http://localhost:4200","https://profile-analyzer.herokuapp.com"})
+//@CrossOrigin(origins={"http://localhost:4200","https://profile-analyzer.herokuapp.com"})
+@CrossOrigin
 @RestController
 public class GameController {
 
