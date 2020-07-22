@@ -1,5 +1,6 @@
 package com.game.trivia.controller;
 
+import com.game.trivia.dao.QuestionRepository;
 import com.game.trivia.dao.model.QuestionBank;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -16,11 +17,14 @@ import java.util.Optional;
 @RestController
 public class GameController {
 
-    @RequestMapping(value = "/games",method = RequestMethod.GET, produces = "application/json")
-    public QuestionBank getQuestion(){
+    @Autowired
+    QuestionRepository questionRepository;
 
-        //List<QuestionBank> qbR = questionRepository.findAll();
-        QuestionBank qbR = new QuestionBank();
+    @RequestMapping(value = "/games",method = RequestMethod.GET, produces = "application/json")
+    public List<QuestionBank> getQuestion(){
+
+        List<QuestionBank> qbR = questionRepository.findAll();
+        //QuestionBank qbR = new QuestionBank();
 
         return qbR;
 

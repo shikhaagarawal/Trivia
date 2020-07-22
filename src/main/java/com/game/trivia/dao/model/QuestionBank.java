@@ -1,13 +1,16 @@
 package com.game.trivia.dao.model;
 
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.List;
 import java.util.Map;
 
-//@Document(collection="QuestionBank")
+@Document(collection="QuestionBank")
 public class QuestionBank {
 
-    //@Id
+    @Id
     private String id;
 
     //@Indexed(name="question")
