@@ -1,40 +1,31 @@
 package com.game.trivia.dao.model;
 
 public class Player {
-    String firstName;
-    String lastName;
-    String userId;
-    String ipAddress;
+    private String playerName;
+    private String gameInstance;
+    private boolean startGame;
 
-    public String getFirstName() {
-        return firstName;
+    public String getPlayerName() {
+        return playerName;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
-    public String getLastName() {
-        return lastName;
+    public String getGameInstance() {
+        return gameInstance;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setGameInstance(String gameInstance) {
+        this.gameInstance = gameInstance;
     }
 
-    public String getUserId() {
-        return userId;
+    public boolean isStartGame() {
+        return startGame;
     }
 
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    public String getIpAddress() {
-        return ipAddress;
-    }
-
-    public void setIpAddress(String ipAddress) {
-        this.ipAddress = ipAddress;
+    public void setStartGame(boolean startGame) {
+        this.startGame = startGame;
     }
 }

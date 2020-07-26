@@ -3,6 +3,11 @@ package com.game.trivia.controller;
 import com.game.trivia.dao.QuestionRepository;
 import com.game.trivia.dao.model.QuestionBank;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageExceptionHandler;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.Payload;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.annotation.SendToUser;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,14 +27,23 @@ public class GameController {
 
     @RequestMapping(value = "/games",method = RequestMethod.GET, produces = "application/json")
     public List<QuestionBank> getQuestion(){
-
         List<QuestionBank> qbR = questionRepository.findAll();
-        //QuestionBank qbR = new QuestionBank();
-
         return qbR;
 
 
     }
+
+
+
+    //@SendToUser
+
+
+    /*@MessageExceptionHandler
+    @SendToUser("/topic/error")
+    public String handleException(PostNotFoundException ex) {
+        logger.debug("Post not found", ex);
+        return "The requested post was not found";
+    }*/
 
 
 }
