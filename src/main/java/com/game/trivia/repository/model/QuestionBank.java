@@ -1,11 +1,10 @@
-package com.game.trivia.dao.model;
+package com.game.trivia.repository.model;
 
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
-import java.util.Map;
 
 @Document(collection="QuestionBank")
 public class QuestionBank {

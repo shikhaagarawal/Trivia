@@ -1,7 +1,7 @@
 package com.game.trivia.util;
 
-import com.game.trivia.dao.model.Choices;
-import com.game.trivia.dao.model.QuestionBank;
+import com.game.trivia.repository.model.Choices;
+import com.game.trivia.repository.model.QuestionBank;
 
 import java.util.ArrayList;
 import java.util.List;

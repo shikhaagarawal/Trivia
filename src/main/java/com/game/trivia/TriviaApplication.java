@@ -1,4 +1,5 @@
 package com.game.trivia;
+import com.game.trivia.service.GameInstanceService;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfiguration;
@@ -29,5 +30,10 @@ public class TriviaApplication {
 		config.addAllowedMethod("DELETE");
 		source.registerCorsConfiguration("/**", config);
 		return new CorsFilter(source);
+	}
+
+	@Bean
+	public GameInstanceService gameInstanceService(){
+		return new GameInstanceService();
 	}
 }

@@ -1,8 +1,9 @@
-package com.game.trivia.dao.model;
+package com.game.trivia.repository.model;
 
 public class Player {
     private String playerName;
-    private String gameInstance;
+    private String userName;
+    private long gameId;
     private boolean startGame;
 
     public String getPlayerName() {
@@ -13,12 +14,12 @@ public class Player {
         this.playerName = playerName;
     }
 
-    public String getGameInstance() {
-        return gameInstance;
+    public long getGameId() {
+        return gameId;
     }
 
-    public void setGameInstance(String gameInstance) {
-        this.gameInstance = gameInstance;
+    public void setGameId(long gameId) {
+        this.gameId = gameId;
     }
 
     public boolean isStartGame() {
@@ -27,5 +28,13 @@ public class Player {
 
     public void setStartGame(boolean startGame) {
         this.startGame = startGame;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 }

@@ -1,4 +1,4 @@
-package com.game.trivia.dao.model;
+package com.game.trivia.repository.model;
 
 public class Choices{
     private int choice;
