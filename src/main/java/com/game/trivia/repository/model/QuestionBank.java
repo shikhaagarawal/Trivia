@@ -17,6 +17,7 @@ public class QuestionBank {
     List<Choices> choices;
     int level;
     int correctChoice;
+    boolean active;
 
     public String getId() {
         return id;
@@ -56,6 +57,14 @@ public class QuestionBank {
 
     public void setCorrectChoice(int correctChoice) {
         this.correctChoice = correctChoice;
+    }
+
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
     }
 }
 

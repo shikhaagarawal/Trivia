@@ -10,7 +10,7 @@ import java.util.Random;
 public class QuestionGenerator {
     Random r = new Random();
 
-    private QuestionBank generate(int upperBound, int lowerBound, int totalChoices) {
+    public QuestionBank generate(int upperBound, int lowerBound, int totalChoices) {
         int num1 = r.nextInt(upperBound-lowerBound)+lowerBound;
         int num2 = r.nextInt(upperBound-lowerBound)+lowerBound;
         int res = num1 + num2;
