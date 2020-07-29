@@ -1,13 +1,16 @@
 package com.game.trivia.service;
 
 import com.game.trivia.repository.GameInstanceRepository;
-import com.game.trivia.repository.model.GameInstance;
-import com.game.trivia.repository.model.Status;
+import com.game.trivia.repository.QuestionRepository;
+import com.game.trivia.repository.model.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -20,54 +23,65 @@ public class GameInstanceService {
     @Autowired
     GameInstanceRepository gameInstanceRepository;
 
-    //@Value("{players.game.begin.time.seconds}")
-    //private String gameWaitTime;
-
-
-    Timer timer = new Timer();
-
-    public GameInstance addPlayerInGame(String userName) {
-
+    /**
+     * Add player into gameInstance where game status is waiting
+     * @param player
+     * @return
+     */
+    public GameInstance addPlayerInGame(Player player) {
         //find waiting game
         List<GameInstance> waitingPool = gameInstanceRepository.findByStatus(Status.WAITING);
         if (waitingPool.size() == 0) {
             logger.info("Creating new game");
-            return createNewGame(userName);
+            return createNewGame(player);
         }
-        if (waitingPool.size() > 1) {
-            //TODO code error -Error handling
-        }
-        logger.info("Adding player in new game");
-        Query query1 = new Query();
-        query1.addCriteria(Criteria.where("gameId").is(waitingPool.get(0).getGameId()));
-        Optional<GameInstance> gameInstance = gameInstanceRepository.findById(waitingPool.get(0).getId());
+        //Add player in new game
+        waitingPool.get(0).getPlayers().add(player);
+        gameInstanceRepository.save(waitingPool.get(0));
 
-        gameInstance.get().getPlayers().add(userName);
-        gameInstanceRepository.save(gameInstance.get());
-
-        return gameInstance.get();
+        return waitingPool.get(0);
     }
 
-    public GameInstance createNewGame(String userName) {
+    /**
+     * Create a game when no waiting gameInstance found in DB
+     * @param player
+     * @return
+     */
+    public GameInstance createNewGame(Player player) {
         GameInstance gameInstance = new GameInstance();
-        gameInstance.setGameId(12L); //TODO generate new gameID
-        gameInstance.setPlayers(Arrays.asList(userName));
+        gameInstance.setGameId(nextGameId());
+        gameInstance.setPlayers(Arrays.asList(player));
         gameInstance.setStatus(Status.WAITING);
+        gameInstance.setLevel(1);
         gameInstanceRepository.save(gameInstance);
         return gameInstance;
     }
 
-    public void fetchQuestion(long gameId, int level) {
-        logger.info("Fetching question for gameId:"+gameId);
-        timer.schedule(new RemindTask(), 30*1000);
+    /**
+     * Add question into current game
+     * @return
+     */
+    public void addQuesInGame(String quesId, GameInstance game, Status status){
+        Question ques = new Question();
+        ques.setQuestionId(quesId);
+        if(game.getQuestions().size() == 0)  game.setQuestions(Arrays.asList(ques));
+        else    game.getQuestions().add(ques);
+        game.setStatus(status);
+        game.setLevel(game.getLevel()+1);
+        gameInstanceRepository.save(game);
     }
 
-    class RemindTask extends TimerTask {
-        public void run() {
-            //TODO fetch question and broadcast
-            logger.info("Closing Fetching question for gameId:");
-            //this.template.convertAndSend("/topic/play/game", p);
-            timer.cancel(); //Terminate the timer thread
-        }
+    /**
+     * Find maximum gameId into gameInstance collection.
+     * @return
+     */
+    private long nextGameId(){
+        List<GameInstance> list = gameInstanceRepository.findAll(Sort.by(Sort.Direction.DESC, "gameId"));
+        if(list.size() == 0) return 19L; //TODO set in app.properties
+        return list.get(0).getGameId()+1;
+    }
+
+    public GameInstance findGame(long gameId){
+        return gameInstanceRepository.findByGameId(gameId);
     }
 }

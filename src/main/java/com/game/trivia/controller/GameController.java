@@ -26,15 +26,12 @@ public class GameController {
 
     }
 
-    //@SendToUser
+    @RequestMapping(value = "/app/quiz/choice",method = RequestMethod.GET, produces = "application/json")
+    public List<QuestionBank> savePlayersQuizChoice(){
+        List<QuestionBank> qbR = questionRepository.findAll();
+        return qbR;
 
 
-    /*@MessageExceptionHandler
-    @SendToUser("/topic/error")
-    public String handleException(PostNotFoundException ex) {
-        logger.debug("Post not found", ex);
-        return "The requested post was not found";
-    }*/
-
+    }
 
 }

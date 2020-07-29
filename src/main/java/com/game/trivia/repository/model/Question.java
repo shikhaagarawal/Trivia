@@ -1,8 +1,10 @@
 package com.game.trivia.repository.model;
 
+import java.util.List;
+
 public class Question {
     private String questionId;
-    private Statistic stats;
+    private List<Statistic> stats;
 
     public String getQuestionId() {
         return questionId;
@@ -12,11 +14,11 @@ public class Question {
         this.questionId = questionId;
     }
 
-    public Statistic getStats() {
+    public List<Statistic> getStats() {
         return stats;
     }
 
-    public void setStats(Statistic stats) {
+    public void setStats(List<Statistic> stats) {
         this.stats = stats;
     }
 }

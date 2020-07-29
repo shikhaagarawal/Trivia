@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * For admins only
+ */
 @RestController
 public class QuestionBankController {
 

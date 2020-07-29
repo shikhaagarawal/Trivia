@@ -3,6 +3,7 @@ package com.game.trivia.repository.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Document(collection="GameInstance")
@@ -14,8 +15,8 @@ public class GameInstance {
     private long gameId;
     private Status status;
     private String winner;
-    private List<String> players;
-    private List<Question> questions;
+    private List<Player> players = new ArrayList<>();
+    private List<Question> questions = new ArrayList<>();
     private int level;
 
     public String getId() {
@@ -50,11 +51,11 @@ public class GameInstance {
         this.winner = winner;
     }
 
-    public List<String> getPlayers() {
+    public List<Player> getPlayers() {
         return players;
     }
 
-    public void setPlayers(List<String> players) {
+    public void setPlayers(List<Player> players) {
         this.players = players;
     }
 

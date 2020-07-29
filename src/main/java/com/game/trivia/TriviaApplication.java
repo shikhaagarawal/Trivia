@@ -1,5 +1,6 @@
 package com.game.trivia;
 import com.game.trivia.service.GameInstanceService;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.web.filter.CorsFilter;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.cors.CorsConfiguration;
@@ -8,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class TriviaApplication {
+public class TriviaApplication extends SpringBootServletInitializer {
 
 	//TODO log4j
 
