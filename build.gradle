@@ -21,7 +21,6 @@ dependencies {
 	compile group: 'org.springframework.security', name: 'spring-security-config', version: '3.2.0.RELEASE'
 	compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '1.0.0.RELEASE'
 
-
 	//For websocket
 	implementation 'org.webjars:webjars-locator-core'
 	implementation 'org.webjars:sockjs-client:1.0.2'

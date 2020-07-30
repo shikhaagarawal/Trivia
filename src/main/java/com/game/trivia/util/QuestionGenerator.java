@@ -19,6 +19,7 @@ public class QuestionGenerator {
         int option = r.nextInt(totalChoices)+1;
         List<Choices> choicesList = new ArrayList<>();
         Set<Integer> generateChoices = new HashSet<>();
+        generateChoices.add(res);
         for (int i = 1; i <= 4; i++) {
             int num = r.nextInt(upperBound + lowerBound);
             while(generateChoices.contains(num)){

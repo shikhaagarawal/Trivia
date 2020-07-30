@@ -1,12 +1,13 @@
 package com.game.trivia.repository.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection="QuestionBank")
+@Document(collection = "QuestionBank")
 public class QuestionBank {
 
     @Id
@@ -51,6 +52,7 @@ public class QuestionBank {
         this.level = level;
     }
 
+    @JsonIgnore
     public int getCorrectChoice() {
         return correctChoice;
     }

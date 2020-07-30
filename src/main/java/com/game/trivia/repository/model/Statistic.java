@@ -2,21 +2,12 @@ package com.game.trivia.repository.model;
 
 public class Statistic {
 
-    private String correctAnswer;
     private String choice;
     private int playerCount;
 
-    public Statistic(String correctAnswer, String choice, int playerCount){
-        this.correctAnswer = correctAnswer;
+    public Statistic(String choice, int playerCount) {
         this.choice = choice;
         this.playerCount = playerCount;
-    }
-    public String getCorrectAnswer() {
-        return correctAnswer;
-    }
-
-    public void setCorrectAnswer(String correctAnswer) {
-        this.correctAnswer = correctAnswer;
     }
 
     public String getChoice() {

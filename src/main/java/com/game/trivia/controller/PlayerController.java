@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@CrossOrigin
 public class PlayerController {
 
     Logger logger = LoggerFactory.getLogger(PlayerController.class);
@@ -69,33 +68,31 @@ public class PlayerController {
                     broadcastGameAboutToBegin(p, p.getSessionId());
                 }
             }
+            showQuiz(game.getGameId(),game.getLevel());
         } else if (game.getPlayers().size() > Integer.parseInt(minPlayers)) {
             //Otherwise send notification only to the current player
             broadcastGameAboutToBegin(player, principal.getName());
         }
-        if (player.isStartGame()) {
-            showQuiz(game);
-        }
     }
 
-    private void showQuiz(GameInstance currentGame) {
-        if (currentGame.getLevel() > Integer.parseInt(gameLevelsToPlay)) {
+    private void showQuiz(long gameId,int gameLevel) {
+        if (gameLevel > Integer.parseInt(gameLevelsToPlay)) {
             return;
         }
         try {
-            Thread.sleep(Integer.parseInt(gameWaitTime) * 1000); //TODO here is a bug for last moment players joining in
+            Thread.sleep(Integer.parseInt(gameWaitTime) * 1000);
+            GameInstance currentGame = gameInstanceService.findGame(gameId);
             QuestionBank ques = questionInstanceService.fetchQuestion(currentGame.getLevel()+1);
             questionInstanceService.changeQuesStatus(ques, false);
             gameInstanceService.addQuesInGame(ques.getId(), currentGame, Status.PLAYING);
 
             //Send question to all players added in current game.
             gameCorrectAnswer.put(currentGame.getGameId(),ques.getCorrectChoice());
-            currentGame = broadcastQuiz(currentGame, ques);
+            broadcastQuiz(gameId, ques);
 
             //Wait for ques to be answered
             Thread.sleep(Integer.parseInt(answerWaitTime) * 1000);
-            processAndBroadcastStatistic(currentGame, ques);
-
+            processAndBroadcastStatistic(gameId, ques);
 
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -107,19 +104,20 @@ public class PlayerController {
      * This method will be invoked after question is displayed to players.
      * This will generate statistics, broadcast them and update stats and player status(active/inactive) in database
      *
-     * @param currentGame
+     * @param gameId
      * @param ques
      */
-    private int processAndBroadcastStatistic(GameInstance currentGame, QuestionBank ques) {
+    private int processAndBroadcastStatistic(long gameId, QuestionBank ques) {
         //Send overall stats and result of a particular player
         logger.info("Time's up! Generate Stats for questionId : " + ques.getId());
+        GameInstance currentGame = gameInstanceService.findGame(gameId);
         int correctChoice = gameCorrectAnswer.get(currentGame.getGameId());
         int nextLevelPlayerCount = 0;
         for (Question q : currentGame.getQuestions()) {
             if (q.getQuestionId().equals(ques.getId())) {
                 int countChoice1 = 0, countChoice2 = 0, countChoice3 = 0, countChoice4 = 0;
 
-                //Look for all players
+                //Calculate Stats from all players and set status is playing or not
                 for (Player currentPlayer : currentGame.getPlayers()) {
                     Player cachedPlayerInfo = playerAnswers.getOrDefault(currentGame.getGameId(), new HashMap<>()).getOrDefault(currentPlayer.getSessionId(), null);
                     if (null != cachedPlayerInfo) {
@@ -140,10 +138,10 @@ public class PlayerController {
                     }
                 }
 
-                q.setStats(Arrays.asList(new Statistic(ques.getChoices().get(correctChoice - 1).getText(), ques.getChoices().get(0).getText(), countChoice1),
-                        new Statistic(ques.getChoices().get(correctChoice - 1).getText(), ques.getChoices().get(1).getText(), countChoice2),
-                        new Statistic(ques.getChoices().get(correctChoice - 1).getText(), ques.getChoices().get(2).getText(), countChoice3),
-                        new Statistic(ques.getChoices().get(correctChoice - 1).getText(), ques.getChoices().get(3).getText(), countChoice4)));
+                q.setStats(Arrays.asList(new Statistic(ques.getChoices().get(0).getText(), countChoice1),
+                        new Statistic(ques.getChoices().get(1).getText(), countChoice2),
+                        new Statistic(ques.getChoices().get(2).getText(), countChoice3),
+                        new Statistic(ques.getChoices().get(3).getText(), countChoice4)));
 
                 for (Player currentPlayer : currentGame.getPlayers()) {
                     currentPlayer.setStats(q.getStats());
@@ -164,6 +162,7 @@ public class PlayerController {
                         }
                     }
                     currentGame.setStatus(Status.FINISHED);
+                    gameInstanceService.saveGame(currentGame);
                 } else if (nextLevelPlayerCount <= 1) {
                     logger.info("None or one player has answered correctly");
                     for (Player currentPlayer : currentGame.getPlayers()) {
@@ -172,21 +171,14 @@ public class PlayerController {
                         }
                     }
                     currentGame.setStatus(Status.FINISHED);
+                    gameInstanceService.saveGame(currentGame);
                 } else {
                     //Advance to next level
                     for (Player currentPlayer : currentGame.getPlayers()) {
-                        try {
-                            Thread.sleep(3000);
-                        }catch (InterruptedException ie){
-                            logger.error(ie.getLocalizedMessage());
-                        }
                         playerAnswers.remove(currentGame.getGameId());
-                        showQuiz(currentGame);
+                        showQuiz(currentGame.getGameId(),currentGame.getLevel());
                     }
                 }
-                //update player info in database, also Update winner and game status in database (if any)
-                gameInstanceService.saveGame(currentGame); //TODO check where this should be
-
                 //Clear cached map to get ready for next level
                 fastestPlayer.remove(currentGame.getGameId());
                 playerAnswers.remove(currentGame.getGameId());
@@ -202,9 +194,9 @@ public class PlayerController {
         template.convertAndSendToUser(sessionId, PLAYER_QUEUE_NAME, p);
     }
 
-    private GameInstance broadcastQuiz(GameInstance game, QuestionBank ques) {
+    private GameInstance broadcastQuiz(long gameId, QuestionBank ques) {
+        GameInstance game = gameInstanceService.findGame(gameId);
         game = gameInstanceService.findGame(game.getGameId()); //Fetch updated list
-        ques.setCorrectChoice(0); //TODO ignore in sending response rather than setting to 0.
         for (Player p : game.getPlayers()) {
             if (p.isPlaying()) {
                 template.convertAndSendToUser(p.getSessionId(), PLAYER_QUEUE_NAME, ques);
@@ -214,7 +206,7 @@ public class PlayerController {
     }
 
     private void broadcastWinner(GameInstance game, Player player) {
-        game.setWinner(player.getSessionId());
+        game.setWinner(player.getPlayerName());
 
         Winner winner = new Winner(game.getPlayers().size(), game.getLevel(), true);
         template.convertAndSendToUser(player.getSessionId(), PLAYER_QUEUE_NAME, winner);

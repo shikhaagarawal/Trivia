@@ -11,8 +11,6 @@ import org.springframework.context.annotation.Bean;
 @SpringBootApplication
 public class TriviaApplication extends SpringBootServletInitializer {
 
-	//TODO log4j
-
 	public static void main(String[] args) {
 		SpringApplication.run(TriviaApplication.class, args);
 	}

@@ -81,7 +81,7 @@ public class GameInstanceService {
      */
     private long nextGameId(){
         List<GameInstance> list = gameInstanceRepository.findAll(Sort.by(Sort.Direction.DESC, "gameId"));
-        if(list.size() == 0) return 19L; //TODO set in app.properties
+        if(list.size() == 0) return 1L;
         return list.get(0).getGameId()+1;
     }
 

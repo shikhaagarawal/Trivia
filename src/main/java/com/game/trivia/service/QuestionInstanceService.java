@@ -7,12 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class QuestionInstanceService {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    Random random = new Random();
 
     /**
      * Retrieve random question from database for a given game level
@@ -22,7 +25,7 @@ public class QuestionInstanceService {
     public QuestionBank fetchQuestion(int level) {
         List<QuestionBank> questions = questionRepository.findByLevelAndActive(level, true);
         //TODO random algo
-        return questions.get(0);
+        return questions.get(random.nextInt(questions.size())+1);
     }
 
     /**
