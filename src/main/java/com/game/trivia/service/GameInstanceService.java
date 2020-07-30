@@ -37,9 +37,13 @@ public class GameInstanceService {
         }
         //Add player in new game
         waitingPool.get(0).getPlayers().add(player);
-        gameInstanceRepository.save(waitingPool.get(0));
+        saveGame(waitingPool.get(0));
 
         return waitingPool.get(0);
+    }
+
+    public void saveGame(GameInstance gameInstance) {
+        gameInstanceRepository.save(gameInstance);
     }
 
     /**
@@ -52,8 +56,8 @@ public class GameInstanceService {
         gameInstance.setGameId(nextGameId());
         gameInstance.setPlayers(Arrays.asList(player));
         gameInstance.setStatus(Status.WAITING);
-        gameInstance.setLevel(1);
-        gameInstanceRepository.save(gameInstance);
+        gameInstance.setLevel(0);
+        saveGame(gameInstance);
         return gameInstance;
     }
 
@@ -68,7 +72,7 @@ public class GameInstanceService {
         else    game.getQuestions().add(ques);
         game.setStatus(status);
         game.setLevel(game.getLevel()+1);
-        gameInstanceRepository.save(game);
+        saveGame(game);
     }
 
     /**

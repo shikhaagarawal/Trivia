@@ -10,7 +10,7 @@ public class Player {
     private long gameId;
     private boolean startGame;
     private int selectedAnswer;
-    private boolean playing;
+    private boolean playing = true;
     private LocalTime answerReceivedAt;
     private List<Statistic> stats;
 
