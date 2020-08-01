@@ -2,15 +2,13 @@ package com.game.trivia.repository;
 
 import com.game.trivia.repository.model.GameInstance;
 import com.game.trivia.repository.model.Status;
-import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface GameInstanceRepository  extends MongoRepository<GameInstance,String> {
+public interface GameInstanceRepository extends MongoRepository<GameInstance, String> {
 
     List<GameInstance> findByStatus(Status status);
 

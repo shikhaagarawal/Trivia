@@ -5,7 +5,7 @@ public class Winner {
     private long totalLevels;
     private boolean winner;
 
-    public Winner(int totalPlayers,long totalLevels,boolean winner){
+    public Winner(int totalPlayers, long totalLevels, boolean winner) {
         this.totalLevels = totalLevels;
         this.totalPlayers = totalPlayers;
         this.winner = winner;

@@ -3,10 +3,11 @@ package com.game.trivia.repository.model;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection="GameInstance")
+@Document(collection = "GameInstance")
 public class GameInstance {
 
     @Id
@@ -18,6 +19,8 @@ public class GameInstance {
     private List<Player> players = new ArrayList<>();
     private List<Question> questions = new ArrayList<>();
     private int level;
+    private LocalTime gameFinsihedTime;
+    private LocalTime gameStartTime;
 
     public String getId() {
         return id;
@@ -40,6 +43,11 @@ public class GameInstance {
     }
 
     public void setStatus(Status status) {
+        if (status == Status.FINISHED) {
+            gameFinsihedTime = LocalTime.now();
+        } else if (status == Status.PLAYING) {
+            gameStartTime = LocalTime.now();
+        }
         this.status = status;
     }
 
@@ -73,5 +81,21 @@ public class GameInstance {
 
     public void setLevel(int level) {
         this.level = level;
+    }
+
+    public LocalTime getGameFinsihedTime() {
+        return gameFinsihedTime;
+    }
+
+    public void setGameFinsihedTime(LocalTime gameFinsihedTime) {
+        this.gameFinsihedTime = gameFinsihedTime;
+    }
+
+    public LocalTime getGameStartTime() {
+        return gameStartTime;
+    }
+
+    public void setGameStartTime(LocalTime gameStartTime) {
+        this.gameStartTime = gameStartTime;
     }
 }

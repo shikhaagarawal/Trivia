@@ -1,19 +1,18 @@
 package com.game.trivia.service;
 
 import com.game.trivia.repository.GameInstanceRepository;
-import com.game.trivia.repository.QuestionRepository;
-import com.game.trivia.repository.model.*;
+import com.game.trivia.repository.model.GameInstance;
+import com.game.trivia.repository.model.Player;
+import com.game.trivia.repository.model.Question;
+import com.game.trivia.repository.model.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.mongodb.core.query.Criteria;
-import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 @Service
 public class GameInstanceService {
@@ -25,6 +24,7 @@ public class GameInstanceService {
 
     /**
      * Add player into gameInstance where game status is waiting
+     *
      * @param player
      * @return
      */
@@ -48,6 +48,7 @@ public class GameInstanceService {
 
     /**
      * Create a game when no waiting gameInstance found in DB
+     *
      * @param player
      * @return
      */
@@ -63,29 +64,31 @@ public class GameInstanceService {
 
     /**
      * Add question into current game
+     *
      * @return
      */
-    public void addQuesInGame(String quesId, GameInstance game, Status status){
+    public void addQuesInGame(String quesId, GameInstance game, Status status) {
         Question ques = new Question();
         ques.setQuestionId(quesId);
-        if(game.getQuestions().size() == 0)  game.setQuestions(Arrays.asList(ques));
-        else    game.getQuestions().add(ques);
+        if (game.getQuestions().size() == 0) game.setQuestions(Arrays.asList(ques));
+        else game.getQuestions().add(ques);
         game.setStatus(status);
-        game.setLevel(game.getLevel()+1);
+        game.setLevel(game.getLevel() + 1);
         saveGame(game);
     }
 
     /**
      * Find maximum gameId into gameInstance collection.
+     *
      * @return
      */
-    private long nextGameId(){
+    private long nextGameId() {
         List<GameInstance> list = gameInstanceRepository.findAll(Sort.by(Sort.Direction.DESC, "gameId"));
-        if(list.size() == 0) return 1L;
-        return list.get(0).getGameId()+1;
+        if (list.size() == 0) return 1L;
+        return list.get(0).getGameId() + 1;
     }
 
-    public GameInstance findGame(long gameId){
+    public GameInstance findGame(long gameId) {
         return gameInstanceRepository.findByGameId(gameId);
     }
 }

@@ -1,7 +1,6 @@
 package com.game.trivia.config;
 
 import org.springframework.http.server.ServerHttpRequest;
-import org.springframework.security.oauth2.common.util.RandomValueStringGenerator;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
@@ -19,12 +18,8 @@ public class AssignPrincipalHandshakeHandler extends DefaultHandshakeHandler {
     @Override
     protected Principal determineUser(ServerHttpRequest request, WebSocketHandler wsHandler, Map<String, Object> attributes) {
         final String name;
-        if (!attributes.containsKey(ATTR_PRINCIPAL)) {
-            name = UUID.randomUUID().toString();
-            attributes.put(ATTR_PRINCIPAL, name);
-        } else {
-            name = (String) attributes.get(ATTR_PRINCIPAL);
-        }
+        attributes.putIfAbsent(ATTR_PRINCIPAL, UUID.randomUUID().toString());
+        name = (String) attributes.get(ATTR_PRINCIPAL);
         return new Principal() {
             @Override
             public String getName() {

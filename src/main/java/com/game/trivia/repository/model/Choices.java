@@ -1,10 +1,10 @@
 package com.game.trivia.repository.model;
 
-public class Choices{
+public class Choices {
     private int choice;
     private String text;
 
-    public Choices(int choice, String text){
+    public Choices(int choice, String text) {
         this.choice = choice;
         this.text = text;
     }

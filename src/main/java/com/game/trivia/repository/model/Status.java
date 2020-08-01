@@ -1,5 +1,5 @@
 package com.game.trivia.repository.model;
 
-public enum Status{
-    WAITING,PLAYING,FINISHED
+public enum Status {
+    WAITING, PLAYING, FINISHED
 }

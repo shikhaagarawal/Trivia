@@ -20,6 +20,7 @@ dependencies {
 
 	compile group: 'org.springframework.security', name: 'spring-security-config', version: '3.2.0.RELEASE'
 	compile group: 'org.springframework.security.oauth', name: 'spring-security-oauth2', version: '1.0.0.RELEASE'
+	compile group: 'org.projectlombok', name: 'lombok', version: '1.18.12'
 
 	//For websocket
 	implementation 'org.webjars:webjars-locator-core'

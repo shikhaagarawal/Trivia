@@ -1,6 +1,5 @@
 package com.game.trivia.repository.model;
 
-import java.sql.Time;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -9,10 +8,11 @@ public class Player {
     private String sessionId;
     private long gameId;
     private boolean startGame;
-    private int selectedAnswer;
+    private int selectedAnswer = 0;
     private boolean playing = true;
     private LocalTime answerReceivedAt;
     private List<Statistic> stats;
+    private boolean selectedCorrectAnswer;
 
     public String getPlayerName() {
         return playerName;
@@ -76,5 +76,13 @@ public class Player {
 
     public void setStats(List<Statistic> stats) {
         this.stats = stats;
+    }
+
+    public boolean isSelectedCorrectAnswer() {
+        return selectedCorrectAnswer;
+    }
+
+    public void setSelectedCorrectAnswer(boolean selectedCorrectAnswer) {
+        this.selectedCorrectAnswer = selectedCorrectAnswer;
     }
 }
