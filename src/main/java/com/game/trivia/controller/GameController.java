@@ -62,13 +62,11 @@ public class GameController {
         player.setGameId(game.getGameId());
         if (game.getPlayers().size() == Integer.parseInt(minPlayers)) {
             //Send notification to all players
-            for (Player p : game.getPlayers()) {
-                if (p.isPlaying()) {
-                    p.setGameId(game.getGameId());
-                    p.setStartGame(true);
-                    broadcastPlayerInfo(p, p.getSessionId());
-                }
-            }
+            game.getPlayers().parallelStream().filter(p -> p.isPlaying() == true).forEach(p -> {
+                p.setGameId(game.getGameId());
+                p.setStartGame(true);
+                broadcastPlayerInfo(p, p.getSessionId());
+            });
             showQuiz(game.getGameId(), game.getLevel());
         } else if (game.getPlayers().size() > Integer.parseInt(minPlayers)) {
             //Otherwise send notification only to the current player
@@ -131,31 +129,28 @@ public class GameController {
     private int processStatistic(long gameId, QuestionBank ques) {
         //Send overall stats and result of a particular player
         logger.info("Time's up! Generate Stats for questionId : " + ques.getId());
+
         GameInstance currentGame = gameInstanceService.findGame(gameId);
-        int correctChoice = gameCorrectAnswer.get(currentGame.getGameId());
         int nextLevelPlayerCount = 0;
-        for (Question q : currentGame.getQuestions()) {
-            if (q.getQuestionId().equals(ques.getId())) {
+        Question q = currentGame.getQuestions().parallelStream()
+                .filter(x -> x.getQuestionId().equals(ques.getId()))
+                .findFirst().get();
 
-                GenerateStats generateStats = new GenerateStats(currentGame, correctChoice, nextLevelPlayerCount).invoke(playerAnswers);
-                nextLevelPlayerCount = generateStats.getNextLevelPlayerCount();
+        GenerateStats generateStats = new GenerateStats(currentGame, gameCorrectAnswer.get(currentGame.getGameId())).invoke(playerAnswers);
+        nextLevelPlayerCount = generateStats.getNextLevelPlayerCount();
 
-                q.setStats(Arrays.asList(new Statistic(ques.getChoices().get(0).getText(), generateStats.getCountChoice1()),
-                        new Statistic(ques.getChoices().get(1).getText(), generateStats.getCountChoice2()),
-                        new Statistic(ques.getChoices().get(2).getText(), generateStats.getCountChoice3()),
-                        new Statistic(ques.getChoices().get(3).getText(), generateStats.getCountChoice4())));
+        q.setStats(Arrays.asList(new Statistic(ques.getChoices().get(0).getText(), generateStats.getCountChoice1()),
+                new Statistic(ques.getChoices().get(1).getText(), generateStats.getCountChoice2()),
+                new Statistic(ques.getChoices().get(2).getText(), generateStats.getCountChoice3()),
+                new Statistic(ques.getChoices().get(3).getText(), generateStats.getCountChoice4())));
 
-                broadcastStats(currentGame, q);
+        broadcastStats(currentGame, q);
 
-                //Find winner or send to next game level
-                decideWinnerOrNextGame(currentGame, generateStats);
+        decideWinnerOrShowNextGame(currentGame, generateStats);
 
-                //Clear cached map to get ready for next level
-                fastestPlayer.remove(currentGame.getGameId());
-                playerAnswers.remove(currentGame.getGameId());
-                break;
-            }
-        }
+        //Clear cached map to get ready for next level
+        fastestPlayer.remove(currentGame.getGameId());
+        playerAnswers.remove(currentGame.getGameId());
         return nextLevelPlayerCount;
     }
 
@@ -168,7 +163,7 @@ public class GameController {
      * @param currentGame
      * @param generateStats
      */
-    private void decideWinnerOrNextGame(GameInstance currentGame, GenerateStats generateStats) {
+    private void decideWinnerOrShowNextGame(GameInstance currentGame, GenerateStats generateStats) {
         if (currentGame.getLevel() == Integer.parseInt(gameLevelsToPlay)) {
             logger.info("Reached to last level, winner is :" + fastestPlayer.getOrDefault(currentGame.getGameId(), null));
             for (Player currentPlayer : currentGame.getPlayers()) {
@@ -206,12 +201,12 @@ public class GameController {
      * @param q
      */
     private void broadcastStats(GameInstance game, Question q) {
-        for (Player player : game.getPlayers()) {
+        game.getPlayers().parallelStream().forEach(player -> {
             player.setStats(q.getStats());
             broadcastPlayerInfo(player, player.getSessionId());
             player.setStats(null);
             player.setAnswerReceivedAt(null);
-        }
+        });
     }
 
     private void broadcastPlayerInfo(Player player, String sessionId) {

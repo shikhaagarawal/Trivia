@@ -15,10 +15,9 @@ public class GenerateStats {
     private int countChoice3;
     private int countChoice4;
 
-    public GenerateStats(GameInstance currentGame, int correctChoice, int nextLevelPlayerCount) {
+    public GenerateStats(GameInstance currentGame, int correctChoice) {
         this.currentGame = currentGame;
         this.correctChoice = correctChoice;
-        this.nextLevelPlayerCount = nextLevelPlayerCount;
     }
 
     public int getNextLevelPlayerCount() {
