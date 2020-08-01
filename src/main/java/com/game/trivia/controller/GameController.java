@@ -25,13 +25,13 @@ public class GameController {
     Logger logger = LoggerFactory.getLogger(GameController.class);
 
     @Autowired
-    GameInstanceService gameInstanceService;
+    public GameInstanceService gameInstanceService;
 
     @Autowired
     QuestionInstanceService questionInstanceService;
 
     @Autowired
-    SimpMessagingTemplate template;
+    public SimpMessagingTemplate template;
 
     @Value("${players.min}")
     private String minPlayers;
@@ -43,7 +43,7 @@ public class GameController {
     private String answerWaitTime;
 
     @Value("${game.levels.to.play}")
-    private String gameLevelsToPlay;
+    public String gameLevelsToPlay;
 
     private final String PLAYER_QUEUE_NAME = "/queue/play/game";
 
@@ -79,6 +79,7 @@ public class GameController {
 
     /**
      * Invoked when player selects an answer on UI.
+     *
      * @param player
      * @param principal
      */
@@ -102,6 +103,7 @@ public class GameController {
             Thread.sleep(Integer.parseInt(gameWaitTime) * 1000);
             GameInstance currentGame = gameInstanceService.findGame(gameId);
             QuestionBank ques = questionInstanceService.fetchQuestion(currentGame.getLevel() + 1);
+            if (ques.getId().length() == 0) return;
             questionInstanceService.changeQuesStatus(ques, false);
             gameInstanceService.addQuesInGame(ques.getId(), currentGame, Status.PLAYING);
 
@@ -218,11 +220,11 @@ public class GameController {
 
     private GameInstance broadcastQuiz(long gameId, QuestionBank ques) {
         GameInstance game = gameInstanceService.findGame(gameId); //Fetch updated list of players
-        for (Player p : game.getPlayers()) {
-            if (p.isPlaying()) {
-                template.convertAndSendToUser(p.getSessionId(), PLAYER_QUEUE_NAME, ques);
-            }
-        }
+        game.getPlayers().parallelStream()
+                .filter(Player::isPlaying)
+                .forEach(p -> {
+                    template.convertAndSendToUser(p.getSessionId(), PLAYER_QUEUE_NAME, ques);
+                });
         return game;
     }
 
