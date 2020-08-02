@@ -26,7 +26,7 @@ public class GameControllerTest {
     QuestionBank qb = new QuestionBank();
 
     @Test
-    public void broadcast_quiz_never_called_NoPlayers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public void broadcast_quiz_template_never_called_NoPlayers() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         MockitoAnnotations.initMocks(this);
         //Set data
         GameInstance game = new GameInstance();

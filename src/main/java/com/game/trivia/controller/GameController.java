@@ -55,7 +55,7 @@ public class GameController {
     public void addPlayer(@Payload Player player, Principal principal) {
 
         logger.info("PlayerName: " + player.getPlayerName());
-
+        //TODO input validations
         player.setSessionId(principal.getName());
         player.setPlaying(true);
         GameInstance game = gameInstanceService.addPlayerInGame(player);
