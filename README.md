@@ -3,7 +3,7 @@
 It is a fun trivia game in which players have to answer random additional problems. 
 Players can play in real time with their friends.
 
-##How to play
+## How to play
 Trivia is hosted on heroku server which sleeps automatically after 30 mins of inactivity.
 Therefore, prerequisite is to click https://trivia-sa.herokuapp.com before starting a new game every 30 mins; if not done game could behave differently.
 Wait until message "I am awake now. Play Game" appears on the screen. Alright, lets begin.
@@ -30,7 +30,7 @@ Stats after each level:
 Winner and Looser messages:
 ![Alt text](src/main/resources/static/images/LastPage.png?raw=true "Title")
 
-##Business Requirements
+## Business Requirements
 - The application should run in completely automatic mode - i.e no admin intervention should be required to start the game (once a
 minimum number of players have joined) or advance the game to the next round.
 - The application should allow running multiple games simultaneously.
@@ -108,7 +108,7 @@ Collection Names: GameInstance, QuestionBank
 
 Indexing: GameInstance(GameId), QuestionBank(active)
 
-######QuestionBank document:
+###### QuestionBank document:
  
 `{
 _id:ObjectId,
@@ -116,7 +116,7 @@ question: String,
 choice:[choice: number, text: String],level:number,correctChoice:number,active:boolean
 }`
 
-######GameInstance document:
+###### GameInstance document:
  
 `{
 _id:ObjectId,
