@@ -5,11 +5,11 @@ The game consist of multiple levels and as the player make right choice to the q
 
 ## How to play
 - Navigate to the Home Page via https://trivia-sa.herokuapp.com
-- Click on the link that redirects to https://trivia-game-sa.herokuapp.com
+- Click on a link on the page that will redirect to https://trivia-game-sa.herokuapp.com
 - Enter your name and click start game. "Waiting for other players..." msg will be shown.
-- Ask a friend or on a different window, perform above steps.
-- Once minimum players joins the game, 10 second countdown will start.
-- Quickly answer random math addition question in order to win the game.
+- Ask a friend or on a different window, perform the above steps.
+- Once minimum players join the game, a 10 second countdown will start.
+- Quickly answer random math addition questions in order to win the game.
 
 ## Requirements
 - The application should run in completely automatic mode - i.e no admin intervention should be required to start the game (once a
@@ -19,19 +19,18 @@ minimum number of players have joined) or advance the game to the next round.
 - The application should display statistics about player choices at the end of each round (how many players have chosen each answer).
 
 ## Game Flow
-- Game starts, once minimum number of player have joined a game session. For demo purposes, minimum number of player is configured to 2.
-- Any new player, who joins in the waiting time before the 1st question is diplayed also get to play in the same game session.
+- Game starts, once a minimum number of players have joined a game session. For demo purposes, the minimum number of players is configured to 2.
+- Any new player, who joins in the waiting time before the 1st question is displayed, also gets to play in the same game session.
 - Any player who joins after an existing game has started, will have to wait for the next game to begin.
-- Question will appear on player's screen. Once an answer is chosen, all other choices gets disabled.
-- 15 seconds will be given to make a choice of a right answer. If, a player makes no choice within 15 sec, they get disqualified.
+- Questions will appear on the player's screen. Once an answer is chosen, all other choices get disabled.
+- 15 seconds will be given to make a choice of the right answer. If a player makes no choice within 15 sec, they get disqualified.
 - Stats are displayed for 10 seconds at the end of each question.
 
 ### Finding winner
 - A game session can go upto N levels. For demo purposes, the number of levels is set to 5.
-- In case no player makes to the final level, then the game declares the last standing player, with a correct answer, as the winner.
-- In case multiple players submits correct answer in the last round, then the player answering the question in the minimum amount of time is declared as the winner. 
-- In case none of the player submits a correct answer at any given level then no winner is found, and the game session will end.
- 
+- In case no player makes it to the final level, then the game declares the last standing player, with a correct answer, as the winner.
+- In case multiple players submit the correct answer in the last round, then the player answering the question in the minimum amount of time is declared as the winner. 
+- In case none of the players submits a correct answer at any given level then no winner is found, and the game session will end.  
 ###### Scenario 1:  Fastest finger player
 
 Game_1 | Level1 | Level2 | Level3 | Level4 | Level5 | Time_Taken | Result 
