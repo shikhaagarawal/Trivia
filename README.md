@@ -1,36 +1,17 @@
 # Trivia
 
-It is a fun trivia game in which players have to answer random additional problems. 
-Players can play in real time with their friends.
+It is a multiplayer online game in which players have to quickly answer random problems.
+The game consist of multiple levels and as the player make right choice to the question, they advance to the next level.
 
 ## How to play
-Trivia is hosted on heroku server which sleeps automatically after 30 mins of inactivity.
-Therefore, prerequisite is to click https://trivia-sa.herokuapp.com before starting a new game every 30 mins; if not done game could behave differently.
-Wait until message "I am awake now. Play Game" appears on the screen. Alright, lets begin.
-
-- Click https://trivia-game-sa.herokuapp.com
+- Navigate to the Home Page via https://trivia-sa.herokuapp.com
+- Click on the link that redirects to https://trivia-game-sa.herokuapp.com
 - Enter your name and click start game. "Waiting for other players..." msg will be shown.
 - Ask a friend or on a different window, perform above steps.
 - Once minimum players joins the game, 10 second countdown will start.
-- Quickly answer random math addition question to win the game.
+- Quickly answer random math addition question in order to win the game.
 
-
-Players join the game: 
-![Alt text](src/main/resources/static/images/PlayersName.png?raw=true "Players join game")
-
-Minimum players have joined and game is about to begin:
-![Alt text](src/main/resources/static/images/GameBeginCountdown.png?raw=true "Game Countdown")
-
-Random Question at each level:
-![Alt text](src/main/resources/static/images/RandomQuestion.png?raw=true "Random Question")
-
-Stats after each level:
-![Alt text](src/main/resources/static/images/Stats.png?raw=true "Stats")
-
-Winner and Looser messages:
-![Alt text](src/main/resources/static/images/LastPage.png?raw=true "Title")
-
-## Business Requirements
+## Requirements
 - The application should run in completely automatic mode - i.e no admin intervention should be required to start the game (once a
 minimum number of players have joined) or advance the game to the next round.
 - The application should allow running multiple games simultaneously.
@@ -38,28 +19,18 @@ minimum number of players have joined) or advance the game to the next round.
 - The application should display statistics about player choices at the end of each round (how many players have chosen each answer).
 
 ## Game Flow
+- Game starts, once minimum number of player have joined a game session. For demo purposes, minimum number of player is configured to 2.
+- Any new player, who joins in the waiting time before the 1st question is diplayed also get to play in the same game session.
+- Any player who joins after an existing game has started, will have to wait for the next game to begin.
+- Question will appear on player's screen. Once an answer is chosen, all other choices gets disabled.
+- 15 seconds will be given to make a choice of a right answer. If, a player makes no choice within 15 sec, they get disqualified.
+- Stats are displayed for 10 seconds at the end of each question.
 
-- Question will appear on screen. Once answer is selected, all other options gets disabled.
-- 15 seconds will be given to choose a answer.
-- After 15 seconds wait time, stats will be shown.
-- On stats screen, wait for 10 seconds before 
-    - Next question appear on screen, Or
-    - Show winner page, Or
-    - Show thank you page.
-
-#### Multiple Games flow
-- Once minimum players(say P1 & P2) join the game(say GAME_1), game countdown(10s) will start.
-- All others players(say P3 & P4) joining within running 10s countdown will join GAME_1.
-- GAME_1 will start quiz, say level1.
-- Other player(say P5) wants to play the game then he will be added in new game(say GAME_2) and wait for other players to join.
-- Other player(say P6) start the game, he will be added in GAME_2 and game countdown(10s) will start.
-- GAME_1 and GAME_2 will have their own players,questions and winners.
-
-#### Finding winner
-- 5 levels can be played in one game.
-- Fastest finger player in last round wins the game.
-- If, only one player selects correct answer at any given level then he will be declared winner and game ends.
-- If, none of the player selected correct answer at any given level then no winner is found such that game will end.
+### Finding winner
+- A game session can go upto N levels. For demo purposes, the number of levels is set to 5.
+- In case no player makes to the final level, then the game declares the last standing player, with a correct answer, as the winner.
+- In case multiple players submits correct answer in the last round, then the player answering the question in the minimum amount of time is declared as the winner. 
+- In case none of the player submits a correct answer at any given level then no winner is found, and the game session will end.
  
 ###### Scenario 1:  Fastest finger player
 
@@ -88,17 +59,32 @@ Player2 | correct | correct |  wrong  |  Looser
 Player3 | correct | correct |  wrong  | Looser   
 Player4 | correct | correct |  timeOut  |  Looser
 
+
+### Screenshots
+Players join the game
+![Alt text](src/main/resources/static/images/PlayersName.png?raw=true "Players join game")
+
+Minimum players have joined and game is about to begin
+![Alt text](src/main/resources/static/images/GameBeginCountdown.png?raw=true "Game Countdown")
+
+Random Question at each level
+![Alt text](src/main/resources/static/images/RandomQuestion.png?raw=true "Random Question")
+
+Stats after each level
+![Alt text](src/main/resources/static/images/Stats.png?raw=true "Stats")
+
+Winner and Looser messages
+![Alt text](src/main/resources/static/images/LastPage.png?raw=true "Title")
+
+## Known Behavior
+- Game boot time is slow due to server hosting environment.
+
 ## Tech Stack
 Tiered Architecture:
 - Web: Angular, websockets (https://github.com/shikhaagarawal/Trivia-UI)
 - Server: Springboot, websockets (https://github.com/shikhaagarawal/Trivia)
 - Database: MongoDB 
 - Hosting : Heroku
-
-## Known Issues
-- No validation on player name.
-- On UI, timer sometimes skip count by 2 instead of 1.
-- Prev questions stats does not go away.
 
 ## Database
 
@@ -131,10 +117,10 @@ gameStartTime:time;
 }`
 
 ## Useful API's
-- API to populate question bank.
+- API to add questions.
            
       POST - https://trivia-sa.herokuapp.com/add/questions/{level}/{rangeFrom}/{rangeTo}
       
-- API to restore questions from a archive and mark them available. Used a lot during testing.
+- API to restore questions from archive.
            
       POST - https://trivia-sa.herokuapp.com/add/questions/{level}/{rangeFrom}/{rangeTo}
