@@ -3,6 +3,7 @@ package com.game.trivia.controller;
 import com.game.trivia.repository.model.*;
 import com.game.trivia.service.GameInstanceService;
 import com.game.trivia.service.QuestionInstanceService;
+import com.game.trivia.util.AppConstants;
 import com.game.trivia.util.GenerateStats;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,24 +29,22 @@ public class GameController {
     public GameInstanceService gameInstanceService;
 
     @Autowired
-    QuestionInstanceService questionInstanceService;
+    public QuestionInstanceService questionInstanceService;
 
     @Autowired
     public SimpMessagingTemplate template;
 
     @Value("${players.min}")
-    private String minPlayers;
+    public String minPlayers;
 
     @Value("${game.begin.time.seconds}")
-    private String gameWaitTime;
+    public String waitingRoomTime;
 
     @Value("${question.answer.wait.time.seconds}")
-    private String answerWaitTime;
+    public String answerWaitTime;
 
     @Value("${game.levels.to.play}")
     public String gameLevelsToPlay;
-
-    private final String PLAYER_QUEUE_NAME = "/queue/play/game";
 
     private Map<Long, Map<String, Player>> playerAnswers = new HashMap<>();
     private Map<Long, String> fastestPlayer = new HashMap<>();
@@ -55,7 +54,6 @@ public class GameController {
     public void addPlayer(@Payload Player player, Principal principal) {
 
         logger.info("PlayerName: " + player.getPlayerName());
-        //TODO input validations
         player.setSessionId(principal.getName());
         player.setPlaying(true);
         GameInstance game = gameInstanceService.addPlayerInGame(player);
@@ -98,7 +96,7 @@ public class GameController {
             return;
         }
         try {
-            Thread.sleep(Integer.parseInt(gameWaitTime) * 1000);
+            Thread.sleep(Integer.parseInt(waitingRoomTime) * 1000);
             GameInstance currentGame = gameInstanceService.findGame(gameId);
             QuestionBank ques = questionInstanceService.fetchQuestion(currentGame.getLevel() + 1);
             if (ques.getId().length() == 0) return;
@@ -210,7 +208,7 @@ public class GameController {
     }
 
     private void broadcastPlayerInfo(Player player, String sessionId) {
-        template.convertAndSendToUser(sessionId, PLAYER_QUEUE_NAME, player);
+        template.convertAndSendToUser(sessionId, AppConstants.PLAYER_QUEUE_NAME, player);
     }
 
     private GameInstance broadcastQuiz(long gameId, QuestionBank ques) {
@@ -218,7 +216,7 @@ public class GameController {
         game.getPlayers().parallelStream()
                 .filter(Player::isPlaying)
                 .forEach(p -> {
-                    template.convertAndSendToUser(p.getSessionId(), PLAYER_QUEUE_NAME, ques);
+                    template.convertAndSendToUser(p.getSessionId(), AppConstants.PLAYER_QUEUE_NAME, ques);
                 });
         return game;
     }
@@ -232,7 +230,7 @@ public class GameController {
     private void broadcastWinner(GameInstance game, Player player) {
         game.setWinner(player.getPlayerName());
         Winner winner = new Winner(game.getPlayers().size(), game.getLevel(), true);
-        template.convertAndSendToUser(player.getSessionId(), PLAYER_QUEUE_NAME, winner);
+        template.convertAndSendToUser(player.getSessionId(), AppConstants.PLAYER_QUEUE_NAME, winner);
     }
 
 }
